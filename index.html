@@ -26,11 +26,17 @@
             document.documentElement.classList.add('dark');
           }
         } catch (e) {}
+
+        // Immediate redirect to /docs/ if hosted on GitHub Pages root
+        if (window.location.hostname.includes('github.io') && !window.location.pathname.includes('/docs')) {
+          var path = window.location.pathname.replace(/\/+$/, '');
+          window.location.replace(path + '/docs/');
+        }
       })();
     </script>
   </head>
   <body class="bg-[#eaf1fa] dark:bg-[#0d0e12] text-slate-900 dark:text-slate-100 antialiased selection:bg-blue-600/30 selection:text-blue-900 dark:selection:text-blue-200 min-h-screen">
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
