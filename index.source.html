@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0d0e12" />
+    <meta name="description" content="Philes is a premium, zero-upload universal offline file converter and desktop toolkit running completely in your browser." />
+    <meta name="keywords" content="offline file converter, pdf tools, local converter, zero-upload, pwa converter, private document converter" />
+    
+    <!-- Strict CSP to enforce zero outbound leaks and safe local execution -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: data:; worker-src 'self' blob:; frame-src 'self' blob: data:; object-src 'none'; base-uri 'self';" />
+    
+    <title>Philes — Universal Offline File Converter &amp; Toolkit</title>
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('philes-theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'light') {
+            document.documentElement.classList.remove('dark');
+          } else if (saved === 'dark' || (!saved && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="text-slate-900 dark:text-slate-100 antialiased selection:bg-blue-600/30 selection:text-blue-900 dark:selection:text-blue-200 min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>

@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build && node -e \"const fs=require('fs'); fs.rmSync('docs', {recursive:true,force:true}); fs.cpSync('dist', 'docs', {recursive: true});\"",
+    "dev": "vite index.source.html",
+    "build": "tsc -b && vite build && node scripts/sync-build.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },
