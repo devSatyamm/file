@@ -1,4 +1,4 @@
-name: Deploy FileForge to GitHub Pages
+name: Deploy Philes to GitHub Pages
 
 on:
   push:

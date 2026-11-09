@@ -88,7 +88,7 @@ export const FileManager: React.FC = () => {
             />
           </div>
           <p className="text-[11px] text-slate-500">
-            FileForge processes files in volatile in-memory buffers only. No files, logs, or past records are kept on disk.
+            Philes processes files in volatile in-memory buffers only. No files, logs, or past records are kept on disk.
           </p>
         </div>
       </div>
@@ -100,7 +100,7 @@ export const FileManager: React.FC = () => {
           <h3 className="text-sm font-semibold text-white">Strict Zero-Trace Architecture</h3>
         </div>
         <p className="text-xs text-slate-300 leading-relaxed">
-          FileForge operates in pure ephemeral RAM mode. When conversion jobs finish, all document memory is garbage-collected. No conversion history, filenames, metadata, or traces remain in IndexedDB or localStorage.
+          Philes operates in pure ephemeral RAM mode. When conversion jobs finish, all document memory is garbage-collected. No conversion history, filenames, metadata, or traces remain in IndexedDB or localStorage.
         </p>
       </div>
 

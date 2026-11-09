@@ -26,7 +26,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, activeTab }) => {
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('fileforge-theme') as 'dark' | 'light' | null;
+      const saved = localStorage.getItem('philes-theme') as 'dark' | 'light' | null;
       if (saved) return saved;
       return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
     }
@@ -92,14 +92,14 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, activeTab }) => {
         setDeferredPrompt(null);
       }
     } else {
-      alert('FileForge is PWA ready. To install, use "Install App" or your browser\'s address bar install icon.');
+      alert('Philes is PWA ready. To install, use "Install App" or your browser\'s address bar install icon.');
     }
   };
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
-    localStorage.setItem('fileforge-theme', next);
+    localStorage.setItem('philes-theme', next);
     if (next === 'light') {
       document.documentElement.classList.remove('dark');
     } else {
@@ -148,7 +148,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, activeTab }) => {
           </svg>
         </div>
         <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-slate-100">
-          FileForge
+          Philes
         </span>
       </div>
 

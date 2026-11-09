@@ -57,7 +57,7 @@ export const DevTools: React.FC<DevToolsProps> = ({ initialTab = 'json' }) => {
   const [copied, setCopied] = useState<string | null>(null);
 
   // JSON state
-  const [jsonInput, setJsonInput] = useState('{"name":"FileForge","version":"1.0.0","offline":true,"features":["pdf","image","spreadsheet","security"]}');
+  const [jsonInput, setJsonInput] = useState('{"name":"Philes","version":"1.0.0","offline":true,"features":["pdf","image","spreadsheet","security"]}');
   const [jsonResult, setJsonResult] = useState<{ formatted: string; isValid: boolean; error?: string }>({
     formatted: '',
     isValid: true,
@@ -65,16 +65,16 @@ export const DevTools: React.FC<DevToolsProps> = ({ initialTab = 'json' }) => {
 
   // Code Formatter state
   const [codeType, setCodeType] = useState<'xml' | 'html' | 'css' | 'js'>('xml');
-  const [codeInput, setCodeInput] = useState('<note><to>User</to><from>FileForge</from><heading>Zero Cloud</heading><body>Local execution strictly enforced.</body></note>');
+  const [codeInput, setCodeInput] = useState('<note><to>User</to><from>Philes</from><heading>Zero Cloud</heading><body>Local execution strictly enforced.</body></note>');
   const [codeOutput, setCodeOutput] = useState('');
 
   // Base64 / URL state
   const [b64Mode, setB64Mode] = useState<'b64_encode' | 'b64_decode' | 'url_encode' | 'url_decode'>('b64_encode');
-  const [textTransformInput, setTextTransformInput] = useState('FileForge universal offline toolkit');
+  const [textTransformInput, setTextTransformInput] = useState('Philes universal offline toolkit');
   const [textTransformOutput, setTextTransformOutput] = useState('');
 
   // Hashes state
-  const [hashInput, setHashInput] = useState('FileForge Secure Local Converter');
+  const [hashInput, setHashInput] = useState('Philes Secure Local Converter');
   const [hashes, setHashes] = useState<{ sha1: string; sha256: string; sha512: string; md5: string } | null>(null);
 
   // Diff state

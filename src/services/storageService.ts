@@ -1,7 +1,7 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { HistoryItem, UserSettings, EngineModuleStatus } from '../types';
 
-interface FileForgeDB extends DBSchema {
+interface PhilesDB extends DBSchema {
   history: {
     key: string;
     value: HistoryItem;
@@ -17,7 +17,7 @@ interface FileForgeDB extends DBSchema {
   };
 }
 
-const DB_NAME = 'fileforge_database';
+const DB_NAME = 'philes_database';
 const DB_VERSION = 1;
 
 const DEFAULT_SETTINGS: UserSettings = {
@@ -134,11 +134,11 @@ const DEFAULT_MODULES: EngineModuleStatus[] = [
 ];
 
 class StorageService {
-  private dbPromise: Promise<IDBPDatabase<FileForgeDB>> | null = null;
+  private dbPromise: Promise<IDBPDatabase<PhilesDB>> | null = null;
 
-  private async getDB(): Promise<IDBPDatabase<FileForgeDB>> {
+  private async getDB(): Promise<IDBPDatabase<PhilesDB>> {
     if (!this.dbPromise) {
-      this.dbPromise = openDB<FileForgeDB>(DB_NAME, DB_VERSION, {
+      this.dbPromise = openDB<PhilesDB>(DB_NAME, DB_VERSION, {
         upgrade(db) {
           if (!db.objectStoreNames.contains('history')) {
             const historyStore = db.createObjectStore('history', { keyPath: 'id' });
@@ -183,7 +183,7 @@ class StorageService {
   }
 
   public async addHistory(_item: HistoryItem): Promise<void> {
-    // Zero-trace ephemeral architecture: FileForge strictly never writes conversion records, file names, or metadata to disk.
+    // Zero-trace ephemeral architecture: Philes strictly never writes conversion records, file names, or metadata to disk.
     return;
   }
 
@@ -255,7 +255,7 @@ class StorageService {
     if (typeof caches !== 'undefined') {
       const keys = await caches.keys();
       for (const key of keys) {
-        if (key.includes('fileforge-user') || key.includes('temp')) {
+        if (key.includes('philes-user') || key.includes('temp')) {
           await caches.delete(key);
         }
       }

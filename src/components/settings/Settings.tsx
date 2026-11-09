@@ -108,7 +108,7 @@ export const Settings: React.FC = () => {
     { id: 'offline-storage', label: 'Offline & Storage' },
     { id: 'privacy-security', label: 'Privacy & Security' },
     { id: 'preferences', label: 'Conversion Preferences' },
-    { id: 'about', label: 'About FileForge' },
+    { id: 'about', label: 'About Philes' },
   ];
 
   return (
@@ -162,7 +162,7 @@ export const Settings: React.FC = () => {
               <button
                 onClick={() => {
                   updateSetting('theme', 'dark');
-                  localStorage.setItem('fileforge-theme', 'dark');
+                  localStorage.setItem('philes-theme', 'dark');
                   document.documentElement.classList.add('dark');
                 }}
                 className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all ${
@@ -181,7 +181,7 @@ export const Settings: React.FC = () => {
               <button
                 onClick={() => {
                   updateSetting('theme', 'light');
-                  localStorage.setItem('fileforge-theme', 'light');
+                  localStorage.setItem('philes-theme', 'light');
                   document.documentElement.classList.remove('dark');
                 }}
                 className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all ${
@@ -437,7 +437,7 @@ export const Settings: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 5: About FileForge & Developer */}
+      {/* Tab 5: About Philes & Developer */}
       {activeTab === 'about' && (
         <div className="space-y-6 max-w-2xl">
           {/* Developer Profile Card */}
@@ -464,7 +464,7 @@ export const Settings: React.FC = () => {
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              FileForge was architected and built by <strong className="text-slate-900 dark:text-white font-semibold">Satyam Mishra</strong> to solve a fundamental modern problem: users shouldn't have to upload sensitive PDFs, personal spreadsheets, presentations, and documents to cloud servers just to convert or format them. Every tool in this suite runs locally inside browser memory.
+              Philes was architected and built by <strong className="text-slate-900 dark:text-white font-semibold">Satyam Mishra</strong> to solve a fundamental modern problem: users shouldn't have to upload sensitive PDFs, personal spreadsheets, presentations, and documents to cloud servers just to convert or format them. Every tool in this suite runs locally inside browser memory.
             </p>
 
             {/* Social Links Grid */}

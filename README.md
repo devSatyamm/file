@@ -1,8 +1,8 @@
-# FileForge: Universal Offline File Converter & Toolkit
+# Philes: Universal Offline File Converter & Toolkit
 
 > **Zero-Upload • 100% On-Device • Genuine Offline PWA**
 
-FileForge is a premium, desktop-grade, universal file converter and document toolkit built for complete offline privacy. Unlike traditional cloud converters that upload your confidential files to remote servers, FileForge executes all conversions directly inside the user's browser memory using WebAssembly, PDF.js, PDF-lib, SheetJS, Mammoth, Canvas, and Web Crypto APIs.
+Philes is a premium, desktop-grade, universal file converter and document toolkit built for complete offline privacy. Unlike traditional cloud converters that upload your confidential files to remote servers, Philes executes all conversions directly inside the user's browser memory using WebAssembly, PDF.js, PDF-lib, SheetJS, Mammoth, Canvas, and Web Crypto APIs.
 
 ---
 
@@ -70,7 +70,7 @@ FileForge is a premium, desktop-grade, universal file converter and document too
 
 ## 🔒 Security Architecture
 
-FileForge adheres to a **Zero-Upload Threat Model**:
+Philes adheres to a **Zero-Upload Threat Model**:
 - **Content Security Policy (CSP)**: Strict policy preventing dynamic code injection (`eval()`) and external data exfiltration.
 - **Sandboxed Document Previews**: Renders output files within isolated `<iframe>` environments.
 - **Audit Logs**: Live Network Monitor records all local HTTP activity in the Security Center.
@@ -80,7 +80,7 @@ FileForge adheres to a **Zero-Upload Threat Model**:
 
 ## 💻 Desktop PWA Installation
 
-FileForge is a Progressive Web App installable as a standalone native desktop utility:
+Philes is a Progressive Web App installable as a standalone native desktop utility:
 - **Chrome / Edge / Brave**: Click the **Install App** button in the header or the install icon in the URL bar.
 - **macOS / Safari**: Select `File` → `Add to Dock` / `Add to Home Screen`.
 - **Offline Reliability**: Works with disconnected Wi-Fi or in Airplane Mode.
@@ -110,7 +110,7 @@ npm run preview
 
 ## 🌐 Deploying to GitHub & Direct HTML Viewing
 
-FileForge is configured as a **100% frontend-focused static application** (`base: './'`):
+Philes is configured as a **100% frontend-focused static application** (`base: './'`):
 - **View Directly via HTML**: You can open `dist/index.html` directly in any web browser without needing a server.
 - **GitHub Pages Ready**: A GitHub Actions workflow is included at `.github/workflows/deploy.yml`. When you push to your repository on GitHub, it automatically builds and publishes the site live.
 

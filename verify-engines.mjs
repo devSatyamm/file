@@ -3,14 +3,14 @@ import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import DOMPurify from 'dompurify';
 
-console.log('--- FILEFORGE OFFLINE ENGINE TEST SUITE ---');
+console.log('--- PHILES OFFLINE ENGINE TEST SUITE ---');
 
 async function testPdfLib() {
   console.log('\n[1/6] Testing PDF-Lib manipulation & creation...');
   const pdfDoc = await PDFDocument.create();
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const page = pdfDoc.addPage([600, 800]);
-  page.drawText('FileForge Local PDF Test', { x: 50, y: 750, size: 24, font, color: rgb(0.2, 0.4, 0.8) });
+  page.drawText('Philes Local PDF Test', { x: 50, y: 750, size: 24, font, color: rgb(0.2, 0.4, 0.8) });
   page.drawText('Confidential Watermark', { x: 150, y: 400, size: 36, font, color: rgb(0.8, 0.2, 0.2), rotate: degrees(45) });
   const pdfBytes = await pdfDoc.save();
   console.log(`✓ PDF created and watermarked. Output size: ${pdfBytes.length} bytes (starts with %PDF: ${String.fromCharCode(...pdfBytes.subarray(0, 4)) === '%PDF'})`);
@@ -57,7 +57,7 @@ async function testArchiveDefense() {
 
 async function testCryptoHashes() {
   console.log('\n[4/6] Testing Web Crypto API hash algorithms...');
-  const text = 'FileForge Universal Offline Converter';
+  const text = 'Philes Universal Offline Converter';
   const buffer = Buffer.from(text, 'utf-8');
   const sha256Buf = await crypto.subtle.digest('SHA-256', buffer);
   const sha256Hex = Array.from(new Uint8Array(sha256Buf)).map(b => b.toString(16).padStart(2, '0')).join('');

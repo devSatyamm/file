@@ -9,10 +9,10 @@ if ('serviceWorker' in navigator) {
   registerSW({
     immediate: true,
     onNeedRefresh() {
-      console.log('[FileForge PWA] New version available.');
+      console.log('[Philes PWA] New version available.');
     },
     onOfflineReady() {
-      console.log('[FileForge PWA] Application precached. 100% Offline Ready.');
+      console.log('[Philes PWA] Application precached. 100% Offline Ready.');
     },
   });
 }

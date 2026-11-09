@@ -259,7 +259,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, presetTargetForm
     const url = URL.createObjectURL(zipBlob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `FileForge_Batch_${new Date().toISOString().slice(0, 10)}.zip`;
+    a.download = `Philes_Batch_${new Date().toISOString().slice(0, 10)}.zip`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

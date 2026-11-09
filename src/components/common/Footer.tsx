@@ -17,7 +17,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 <Sparkles className="w-4 h-4" />
               </div>
               <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
-                FileForge
+                Philes
               </span>
               <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60">
                 Offline PWA
@@ -164,7 +164,7 @@ export function Footer({ onNavigate }: FooterProps) {
             <span className="flex items-center gap-1 text-[11px] text-slate-400">
               Made with <Heart className="w-3 h-3 text-rose-500 fill-rose-500 inline" /> for privacy
             </span>
-            <span>© {new Date().getFullYear()} FileForge</span>
+            <span>© {new Date().getFullYear()} Philes</span>
           </div>
         </div>
       </div>

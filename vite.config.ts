@@ -11,8 +11,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'offline.html'],
       manifest: {
-        name: 'FileForge - Universal Offline File Converter',
-        short_name: 'FileForge',
+        name: 'Philes - Universal Offline File Converter',
+        short_name: 'Philes',
         description: 'Universal zero-upload offline file converter & toolkit. Process PDFs, images, docs, and code directly in your browser without servers.',
         theme_color: '#090a0f',
         background_color: '#090a0f',

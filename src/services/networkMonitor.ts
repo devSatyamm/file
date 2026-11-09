@@ -41,8 +41,8 @@ class NetworkMonitorService {
 
       if (isExternal && hasBody) {
         this.outboundUserPayloadsCount++;
-        console.error('[FileForge Security] Blocked prohibited external upload:', url);
-        throw new Error(`Security Violation: FileForge prohibited an external upload to ${url}`);
+        console.error('[Philes Security] Blocked prohibited external upload:', url);
+        throw new Error(`Security Violation: Philes prohibited an external upload to ${url}`);
       }
 
       return originalFetch(...args);
@@ -75,8 +75,8 @@ class NetworkMonitorService {
           reason: 'Blocked XHR: Outbound external upload strictly prohibited by Zero-Upload policy',
         };
         self.addLog(entry);
-        console.error('[FileForge Security] Blocked prohibited XHR upload:', url);
-        throw new Error(`Security Violation: FileForge prohibited an external XHR upload to ${url}`);
+        console.error('[Philes Security] Blocked prohibited XHR upload:', url);
+        throw new Error(`Security Violation: Philes prohibited an external XHR upload to ${url}`);
       }
 
       self.addLog({
