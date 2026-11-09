@@ -133,7 +133,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, activeTab }) => {
   };
 
   return (
-    <header className="h-[52px] border-b border-blue-200/70 dark:border-white/[0.08] bg-[#f8fbfe]/95 dark:bg-[#0d0e12]/95 backdrop-blur-md sticky top-0 z-40 px-4 md:px-6 flex items-center justify-between gap-4 transition-colors duration-200">
+    <header className="h-[52px] border-b border-slate-200/60 dark:border-white/[0.08] bg-white/75 dark:bg-[#07090e]/75 backdrop-blur-xl sticky top-0 z-40 px-4 md:px-6 flex items-center justify-between gap-4 transition-colors duration-200">
       {/* Left: Brandmark & Name */}
       <div
         className="flex items-center gap-2.5 cursor-pointer shrink-0"

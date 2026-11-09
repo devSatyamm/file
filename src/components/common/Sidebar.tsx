@@ -32,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onNavigate }) => {
   ];
 
   return (
-    <aside className="w-56 border-r border-blue-200/70 dark:border-white/[0.08] bg-[#f3f7fd] dark:bg-[#0d0e12] flex flex-col justify-between shrink-0 select-none py-3 px-2 transition-colors duration-200">
+    <aside className="w-56 border-r border-slate-200/60 dark:border-white/[0.08] bg-white/60 dark:bg-[#07090e]/60 backdrop-blur-xl flex flex-col justify-between shrink-0 select-none py-3 px-2 transition-colors duration-200">
       <div className="space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon;

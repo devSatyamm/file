@@ -34,7 +34,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#eaf1fa] dark:bg-[#0d0e12] text-slate-900 dark:text-slate-100 flex flex-col antialiased selection:bg-blue-600/30 selection:text-blue-900 dark:selection:text-blue-200 transition-colors duration-200">
+    <div className="min-h-screen bg-transparent text-slate-900 dark:text-slate-100 flex flex-col antialiased selection:bg-blue-600/30 selection:text-blue-900 dark:selection:text-blue-200 transition-colors duration-200">
       {/* Slim, Premium Header */}
       <Header activeTab={activeTab} onNavigate={handleNavigate} />
 
@@ -88,7 +88,7 @@ export function App() {
       </div>
 
       {/* Compact Mobile Bottom Navigation */}
-      <div className="md:hidden border-t border-slate-200 dark:border-white/[0.08] bg-white/95 dark:bg-[#0d0e12]/95 backdrop-blur-md px-4 py-2 flex items-center justify-around z-30 transition-colors duration-200">
+      <div className="md:hidden border-t border-slate-200/60 dark:border-white/[0.08] bg-white/80 dark:bg-[#07090e]/80 backdrop-blur-xl px-4 py-2 flex items-center justify-around z-30 transition-colors duration-200">
         {[
           { id: 'home', label: 'Home', icon: Home },
           { id: 'all-tools', label: 'All Tools', icon: LayoutGrid },
