@@ -26,12 +26,6 @@
             document.documentElement.classList.add('dark');
           }
         } catch (e) {}
-
-        // Immediate redirect to /docs/ if hosted on GitHub Pages root
-        if (window.location.hostname.includes('github.io') && !window.location.pathname.includes('/docs')) {
-          var path = window.location.pathname.replace(/\/+$/, '');
-          window.location.replace(path + '/docs/');
-        }
       })();
     </script>
   </head>

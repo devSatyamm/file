@@ -157,13 +157,15 @@ export const Converter: React.FC<ConverterProps> = ({ queuedFiles, onClearQueued
     }
   };
 
-  // Run all idle tasks
+  // Run all idle tasks concurrently in batches of 3
   const runAllConversions = async () => {
     setIsProcessingAll(true);
     const idleTasks = tasks.filter((t) => t.status === 'idle' || t.status === 'error');
 
-    for (const task of idleTasks) {
-      await runConversion(task);
+    const BATCH_SIZE = 3;
+    for (let i = 0; i < idleTasks.length; i += BATCH_SIZE) {
+      const batch = idleTasks.slice(i, i + BATCH_SIZE);
+      await Promise.all(batch.map((task) => runConversion(task)));
     }
 
     setIsProcessingAll(false);

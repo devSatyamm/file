@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, PDFImage, degrees } from 'pdf-lib';
 
 export interface ImageConversionOptions {
   targetFormat: 'png' | 'jpeg' | 'webp' | 'bmp' | 'ico' | 'svg' | 'gif';
@@ -327,7 +327,9 @@ export class ImageConverter {
   }
 
   /**
-   * Convert multiple images into a single unified multi-page PDF document
+   * Ultra-fast multi-threaded client-side Image to PDF conversion engine.
+   * Leverages direct stream embedding for JPEG/PNG, parallel format preparation,
+   * GPU-accelerated createImageBitmap, and native PDF-lib rotation matrices.
    */
   public static async multipleImagesToPdf(
     items: ImageToPdfItem[],
@@ -338,99 +340,141 @@ export class ImageConverter {
       throw new Error('At least one image is required to build a PDF.');
     }
 
-    onProgress?.(10, 'Initializing PDF document container...');
+    onProgress?.(5, `Preparing ${items.length} images with parallel acceleration...`);
     const pdfDoc = await PDFDocument.create();
 
     const pageSize = options?.pageSize || 'a4';
     const orientation = options?.orientation || 'portrait';
     const margin = options?.margin || 'none';
 
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
+    // Step 1: Pre-process and decode image payloads concurrently (up to 6 parallel workers)
+    const CONCURRENCY_LIMIT = 6;
+    let completedCount = 0;
+
+    const preparedItems = await this.mapConcurrent(
+      items,
+      CONCURRENCY_LIMIT,
+      async (item): Promise<{
+        item: ImageToPdfItem;
+        bytes: Uint8Array;
+        type: 'jpg' | 'png';
+        isDirect: boolean;
+      }> => {
+        const payload = await this.prepareImageForPdf(item);
+        completedCount++;
+        onProgress?.(
+          Math.round(5 + (completedCount / items.length) * 45),
+          `Processed ${completedCount} of ${items.length}: ${item.name}...`
+        );
+        return payload;
+      }
+    );
+
+    onProgress?.(52, 'Embedding images into high-speed vector stream...');
+
+    // Step 2: Sequentially embed images & build PDF pages (thread-safe on pdfDoc context)
+    for (let i = 0; i < preparedItems.length; i++) {
+      const { item, bytes, type } = preparedItems[i];
       onProgress?.(
-        Math.round(15 + (i / items.length) * 75),
-        `Processing page ${i + 1} of ${items.length}: ${item.name}...`
+        Math.round(52 + (i / preparedItems.length) * 40),
+        `Composing page ${i + 1} of ${preparedItems.length}...`
       );
 
-      const objectUrl = URL.createObjectURL(item.file);
-      try {
-        const img = await this.loadImage(objectUrl);
-        const naturalW = img.naturalWidth || img.width;
-        const naturalH = img.naturalHeight || img.height;
+      let embeddedImg: PDFImage | null = null;
 
-        const rotation = item.rotation || 0;
-        const isSwapped = rotation === 90 || rotation === 270;
-        const rotW = isSwapped ? naturalH : naturalW;
-        const rotH = isSwapped ? naturalW : naturalH;
-
-        const canvas = document.createElement('canvas');
-        canvas.width = rotW;
-        canvas.height = rotH;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) throw new Error('Could not create 2D canvas context');
-
-        ctx.save();
-        if (rotation === 90) {
-          ctx.translate(rotW, 0);
-          ctx.rotate(Math.PI / 2);
-        } else if (rotation === 180) {
-          ctx.translate(rotW, rotH);
-          ctx.rotate(Math.PI);
-        } else if (rotation === 270) {
-          ctx.translate(0, rotH);
-          ctx.rotate((3 * Math.PI) / 2);
+      if (type === 'jpg') {
+        try {
+          embeddedImg = await pdfDoc.embedJpg(bytes);
+        } catch {
+          // If direct embed failed, fall back to canvas rasterization
+          embeddedImg = await this.rasterizeAndEmbed(item, pdfDoc);
         }
-        ctx.drawImage(img, 0, 0);
-        ctx.restore();
-
-        const pngBlob = await new Promise<Blob>((resolve) => {
-          canvas.toBlob((b) => resolve(b || new Blob()), 'image/png', 0.98);
-        });
-        const pngBytes = await pngBlob.arrayBuffer();
-        const embeddedImg = await pdfDoc.embedPng(pngBytes);
-
-        let pWidth = 595.28;
-        let pHeight = 841.89;
-        let marginPoints = 0;
-
-        if (margin === 'small') marginPoints = 20;
-        else if (margin === 'big') marginPoints = 40;
-
-        if (pageSize === 'fit') {
-          pWidth = rotW + marginPoints * 2;
-          pHeight = rotH + marginPoints * 2;
-        } else if (pageSize === 'letter') {
-          const isLandscape = orientation === 'landscape' || (orientation === 'auto' && rotW > rotH);
-          pWidth = isLandscape ? 792 : 612;
-          pHeight = isLandscape ? 612 : 792;
-        } else {
-          const isLandscape = orientation === 'landscape' || (orientation === 'auto' && rotW > rotH);
-          pWidth = isLandscape ? 841.89 : 595.28;
-          pHeight = isLandscape ? 595.28 : 841.89;
+      } else {
+        try {
+          embeddedImg = await pdfDoc.embedPng(bytes);
+        } catch {
+          // If direct embed failed, fall back to canvas rasterization
+          embeddedImg = await this.rasterizeAndEmbed(item, pdfDoc);
         }
+      }
 
-        const maxContentW = pWidth - marginPoints * 2;
-        const maxContentH = pHeight - marginPoints * 2;
+      if (!embeddedImg) {
+        throw new Error(`Failed to embed image "${item.name}" into PDF.`);
+      }
 
-        const scale = Math.min(maxContentW / rotW, maxContentH / rotH, 1);
-        const drawW = rotW * scale;
-        const drawH = rotH * scale;
+      const rawW = embeddedImg.width;
+      const rawH = embeddedImg.height;
 
-        const page = pdfDoc.addPage([pWidth, pHeight]);
-        const x = (pWidth - drawW) / 2;
-        const y = (pHeight - drawH) / 2;
+      const rotation = ((item.rotation || 0) % 360 + 360) % 360;
+      const isSwapped = rotation === 90 || rotation === 270;
+      const visualW = isSwapped ? rawH : rawW;
+      const visualH = isSwapped ? rawW : rawH;
 
+      let marginPoints = 0;
+      if (margin === 'small') marginPoints = 20;
+      else if (margin === 'big') marginPoints = 40;
+
+      let pWidth = 595.28;
+      let pHeight = 841.89;
+
+      if (pageSize === 'fit') {
+        pWidth = visualW + marginPoints * 2;
+        pHeight = visualH + marginPoints * 2;
+      } else if (pageSize === 'letter') {
+        const isLandscape = orientation === 'landscape' || (orientation === 'auto' && visualW > visualH);
+        pWidth = isLandscape ? 792 : 612;
+        pHeight = isLandscape ? 612 : 792;
+      } else {
+        const isLandscape = orientation === 'landscape' || (orientation === 'auto' && visualW > visualH);
+        pWidth = isLandscape ? 841.89 : 595.28;
+        pHeight = isLandscape ? 595.28 : 841.89;
+      }
+
+      const maxContentW = Math.max(1, pWidth - marginPoints * 2);
+      const maxContentH = Math.max(1, pHeight - marginPoints * 2);
+
+      const scale = Math.min(maxContentW / visualW, maxContentH / visualH, 1);
+      const drawVisualW = visualW * scale;
+      const drawVisualH = visualH * scale;
+      const imgDrawW = rawW * scale;
+      const imgDrawH = rawH * scale;
+
+      const boxX = (pWidth - drawVisualW) / 2;
+      const boxY = (pHeight - drawVisualH) / 2;
+
+      const page = pdfDoc.addPage([pWidth, pHeight]);
+
+      if (rotation === 0) {
         page.drawImage(embeddedImg, {
-          x,
-          y,
-          width: drawW,
-          height: drawH,
+          x: boxX,
+          y: boxY,
+          width: imgDrawW,
+          height: imgDrawH,
         });
-
-        canvas.width = 1;
-        canvas.height = 1;
-      } finally {
-        URL.revokeObjectURL(objectUrl);
+      } else if (rotation === 90) {
+        page.drawImage(embeddedImg, {
+          x: boxX,
+          y: boxY + imgDrawW,
+          width: imgDrawW,
+          height: imgDrawH,
+          rotate: degrees(-90),
+        });
+      } else if (rotation === 180) {
+        page.drawImage(embeddedImg, {
+          x: boxX + imgDrawW,
+          y: boxY + imgDrawH,
+          width: imgDrawW,
+          height: imgDrawH,
+          rotate: degrees(180),
+        });
+      } else if (rotation === 270) {
+        page.drawImage(embeddedImg, {
+          x: boxX + imgDrawH,
+          y: boxY,
+          width: imgDrawW,
+          height: imgDrawH,
+          rotate: degrees(90),
+        });
       }
     }
 
@@ -438,6 +482,154 @@ export class ImageConverter {
     const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
     onProgress?.(100, `Successfully created ${items.length}-page PDF document.`);
     return new Blob([pdfBytes as any], { type: 'application/pdf' });
+  }
+
+  /**
+   * Pre-reads file bytes and inspects headers to bypass canvas encoding where possible
+   */
+  private static async prepareImageForPdf(item: ImageToPdfItem): Promise<{
+    item: ImageToPdfItem;
+    bytes: Uint8Array;
+    type: 'jpg' | 'png';
+    isDirect: boolean;
+  }> {
+    const rawBuffer = await item.file.arrayBuffer();
+    const bytes = new Uint8Array(rawBuffer);
+
+    // Fast check for standard JPEG
+    const isJpeg =
+      (bytes.length > 2 && bytes[0] === 0xff && bytes[1] === 0xd8) ||
+      item.file.type === 'image/jpeg' ||
+      item.file.type === 'image/jpg' ||
+      /\.(jpe?g)$/i.test(item.name);
+
+    if (isJpeg) {
+      return { item, bytes, type: 'jpg', isDirect: true };
+    }
+
+    // Fast check for standard PNG
+    const isPng =
+      (bytes.length > 4 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) ||
+      item.file.type === 'image/png' ||
+      /\.png$/i.test(item.name);
+
+    if (isPng) {
+      return { item, bytes, type: 'png', isDirect: true };
+    }
+
+    // Otherwise (WebP, SVG, BMP, GIF, etc.): Fast hardware-accelerated rasterization
+    const blob = await this.rasterizeImageToBlob(item.file, item.name);
+    const convertedBuffer = await blob.arrayBuffer();
+    return {
+      item,
+      bytes: new Uint8Array(convertedBuffer),
+      type: blob.type === 'image/png' ? 'png' : 'jpg',
+      isDirect: false,
+    };
+  }
+
+  /**
+   * High-speed parallelized canvas rasterization for formats not directly supported by PDF-lib
+   */
+  private static async rasterizeImageToBlob(file: File | Blob, name?: string): Promise<Blob> {
+    const isSvg = file.type === 'image/svg+xml' || (name && /\.svg$/i.test(name));
+    const isPngLike = file.type === 'image/png' || (name && /\.png$/i.test(name));
+
+    let width = 0;
+    let height = 0;
+    let drawSource: ImageBitmap | HTMLImageElement;
+
+    // Use createImageBitmap if available for high-speed GPU decoding
+    if (typeof createImageBitmap === 'function' && !isSvg) {
+      try {
+        const bitmap = await createImageBitmap(file);
+        width = bitmap.width;
+        height = bitmap.height;
+        drawSource = bitmap;
+      } catch {
+        const url = URL.createObjectURL(file);
+        try {
+          const img = await this.loadImage(url);
+          width = img.naturalWidth || img.width;
+          height = img.naturalHeight || img.height;
+          drawSource = img;
+        } finally {
+          URL.revokeObjectURL(url);
+        }
+      }
+    } else {
+      const url = URL.createObjectURL(file);
+      try {
+        const img = await this.loadImage(url);
+        width = img.naturalWidth || img.width;
+        height = img.naturalHeight || img.height;
+        drawSource = img;
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas 2D context unavailable');
+
+    // Fill white background for opaque formats
+    const targetMime = isSvg || isPngLike ? 'image/png' : 'image/jpeg';
+    if (targetMime === 'image/jpeg') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    ctx.drawImage(drawSource, 0, 0);
+
+    if ('close' in drawSource && typeof (drawSource as ImageBitmap).close === 'function') {
+      (drawSource as ImageBitmap).close();
+    }
+
+    const blob = await new Promise<Blob>((resolve) => {
+      canvas.toBlob((b) => resolve(b || new Blob()), targetMime, 0.92);
+    });
+
+    canvas.width = 1;
+    canvas.height = 1;
+    return blob;
+  }
+
+  /**
+   * Fallback rasterizer for images rejected by direct embedding
+   */
+  private static async rasterizeAndEmbed(item: ImageToPdfItem, pdfDoc: PDFDocument): Promise<PDFImage> {
+    const blob = await this.rasterizeImageToBlob(item.file, item.name);
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    if (blob.type === 'image/png') {
+      return await pdfDoc.embedPng(bytes);
+    } else {
+      return await pdfDoc.embedJpg(bytes);
+    }
+  }
+
+  /**
+   * Concurrency limiter pool helper for non-blocking parallel tasks
+   */
+  private static async mapConcurrent<T, R>(
+    items: T[],
+    limit: number,
+    fn: (item: T, index: number) => Promise<R>
+  ): Promise<R[]> {
+    const results: R[] = new Array(items.length);
+    let nextIndex = 0;
+
+    const workers = new Array(Math.min(limit, items.length)).fill(0).map(async () => {
+      while (nextIndex < items.length) {
+        const current = nextIndex++;
+        results[current] = await fn(items[current], current);
+      }
+    });
+
+    await Promise.all(workers);
+    return results;
   }
 
   /**

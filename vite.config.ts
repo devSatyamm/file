@@ -79,7 +79,7 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'docs',
+    outDir: 'dist',
     rollupOptions: {
       output: {
         manualChunks(id: string) {

@@ -170,22 +170,21 @@ export const ImagesToPdfStudio: React.FC<ImagesToPdfStudioProps> = ({
           origin: { y: 0.7 },
         });
       } else {
-        // Convert each image to a separate PDF and zip them
-        const pdfFiles: { name: string; blob: Blob }[] = [];
-
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          setProgress(Math.round(10 + (i / items.length) * 75));
-          setProgressMsg(`Converting ${item.name} (${i + 1}/${items.length})...`);
-
-          const singleBlob = await ImageConverter.multipleImagesToPdf(
-            [item],
-            { pageSize, orientation, margin }
-          );
-
-          const base = item.name.replace(/\.[^/.]+$/, '');
-          pdfFiles.push({ name: `${base}.pdf`, blob: singleBlob });
-        }
+        // Convert each image to a separate PDF in parallel and zip them
+        let completedCount = 0;
+        const pdfFiles = await Promise.all(
+          items.map(async (item) => {
+            const singleBlob = await ImageConverter.multipleImagesToPdf(
+              [item],
+              { pageSize, orientation, margin }
+            );
+            completedCount++;
+            setProgress(Math.round(10 + (completedCount / items.length) * 75));
+            setProgressMsg(`Converted ${completedCount} of ${items.length}: ${item.name}...`);
+            const base = item.name.replace(/\.[^/.]+$/, '');
+            return { name: `${base}.pdf`, blob: singleBlob };
+          })
+        );
 
         setProgress(90);
         setProgressMsg('Packaging individual PDFs into ZIP archive...');
