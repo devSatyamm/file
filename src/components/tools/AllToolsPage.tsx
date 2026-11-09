@@ -77,7 +77,7 @@ export const AllToolsPage: React.FC<AllToolsPageProps> = ({ onNavigate }) => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by format, tool name, or capability..."
-              className="w-full h-9 pl-9 pr-4 bg-white dark:bg-[#14161f] border border-slate-200 dark:border-white/[0.08] focus:border-blue-500/50 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none shadow-sm dark:shadow-none transition-colors"
+              className="w-full h-9 pl-9 pr-4 bg-white/70 dark:bg-[#0c0f18]/60 backdrop-blur-md border border-slate-200/80 dark:border-white/[0.08] focus:border-blue-500/50 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none shadow-sm dark:shadow-none transition-colors"
             />
           </div>
           <span className="text-xs text-slate-400 font-mono">
@@ -94,7 +94,7 @@ export const AllToolsPage: React.FC<AllToolsPageProps> = ({ onNavigate }) => {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeCategory === cat.id
                   ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-white dark:bg-[#14161f] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.06]'
+                  : 'bg-white/70 dark:bg-[#0c0f18]/60 backdrop-blur-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/80 dark:hover:bg-white/[0.06] border border-slate-200/80 dark:border-white/[0.06]'
               }`}
             >
               {cat.label}
@@ -105,7 +105,7 @@ export const AllToolsPage: React.FC<AllToolsPageProps> = ({ onNavigate }) => {
 
       {/* Grid of Tool Cards (5 columns on desktop) */}
       {filteredTools.length === 0 ? (
-        <div className="p-16 text-center text-xs text-slate-500 bg-white dark:bg-[#14161f] rounded-2xl border border-slate-200 dark:border-white/[0.08]">
+        <div className="p-16 text-center text-xs text-slate-500 bg-white/70 dark:bg-[#0c0f18]/60 backdrop-blur-md rounded-2xl border border-slate-200/80 dark:border-white/[0.08]">
           No tools found matching &quot;{searchQuery}&quot;.
         </div>
       ) : (

@@ -209,26 +209,8 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, activeTab }) => {
         )}
       </div>
 
-      {/* Right: Status & Actions */}
+      {/* Right: Actions */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* Offline Status Badge */}
-        <div
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium border border-blue-200/80 dark:border-white/[0.06] bg-blue-50 dark:bg-[#14161f] text-slate-700 dark:text-slate-300"
-          title={isOnline ? 'All conversions run 100% locally in browser memory' : 'Airplane mode / Offline mode active'}
-        >
-          {!isOnline ? (
-            <>
-              <WifiOff className="w-3 h-3 text-amber-500 dark:text-amber-400" />
-              <span>Offline Active</span>
-            </>
-          ) : (
-            <>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-              <span>Offline Ready</span>
-            </>
-          )}
-        </div>
-
         {/* PWA Install */}
         {!isInstalled && (
           <button

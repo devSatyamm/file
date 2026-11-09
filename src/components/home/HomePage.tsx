@@ -351,8 +351,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, presetTargetForm
             onClick={() => fileInputRef.current?.click()}
             className={`relative rounded-2xl border transition-all p-10 sm:p-14 text-center flex flex-col items-center justify-center cursor-pointer shadow-sm dark:shadow-none ${
               isDragging
-                ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-500/[0.08]'
-                : 'border-slate-200 dark:border-white/[0.1] bg-white/90 dark:bg-[#14161f]/80 hover:border-slate-300 dark:hover:border-white/[0.2] hover:bg-slate-50/90 dark:hover:bg-[#161822]'
+                ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-500/[0.12]'
+                : 'border-slate-200/80 dark:border-white/[0.08] bg-white/70 dark:bg-[#0c0f18]/60 backdrop-blur-xl hover:border-slate-300 dark:hover:border-white/[0.16] hover:bg-white/80 dark:hover:bg-[#0f1320]/75'
             }`}
           >
             <input
@@ -391,7 +391,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, presetTargetForm
 
         {/* Active Upload Queue (if any files added) */}
         {tasks.length > 0 && (
-          <div className="mt-8 space-y-4 rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#14161f] p-4 sm:p-5 shadow-sm dark:shadow-none animate-in fade-in">
+          <div className="mt-8 space-y-4 rounded-2xl border border-slate-200/80 dark:border-white/[0.08] bg-white/70 dark:bg-[#0c0f18]/65 backdrop-blur-xl p-4 sm:p-5 shadow-sm dark:shadow-none animate-in fade-in">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/[0.06]">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
@@ -618,7 +618,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, presetTargetForm
               value={toolSearch}
               onChange={(e) => setToolSearch(e.target.value)}
               placeholder="Search tools..."
-              className="w-full h-8 pl-8 pr-3 bg-white dark:bg-[#14161f] border border-slate-200 dark:border-white/[0.08] focus:border-blue-500/50 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none shadow-sm dark:shadow-none transition-colors"
+              className="w-full h-8 pl-8 pr-3 bg-white/70 dark:bg-[#0c0f18]/60 backdrop-blur-md border border-slate-200/80 dark:border-white/[0.08] focus:border-blue-500/50 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none shadow-sm dark:shadow-none transition-colors"
             />
           </div>
         </div>
@@ -632,7 +632,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, presetTargetForm
               className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 toolCategory === cat.id
                   ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-white dark:bg-[#14161f] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.06]'
+                  : 'bg-white/70 dark:bg-[#0c0f18]/60 backdrop-blur-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/80 dark:hover:bg-white/[0.06] border border-slate-200/80 dark:border-white/[0.06]'
               }`}
             >
               {cat.label}
@@ -642,7 +642,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, presetTargetForm
 
         {/* The 5-Column Cards Grid */}
         {filteredTools.length === 0 ? (
-          <div className="p-14 text-center text-xs text-slate-500 bg-white dark:bg-[#14161f] rounded-2xl border border-slate-200 dark:border-white/[0.08]">
+          <div className="p-14 text-center text-xs text-slate-500 bg-white/70 dark:bg-[#0c0f18]/60 backdrop-blur-md rounded-2xl border border-slate-200/80 dark:border-white/[0.08]">
             No tools found matching &quot;{toolSearch}&quot;.
           </div>
         ) : (

@@ -2,9 +2,7 @@ import React from 'react';
 import {
   Home,
   LayoutGrid,
-  Settings,
-  Lock,
-  Sparkles
+  Settings
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -52,15 +50,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onNavigate }) => {
             </button>
           );
         })}
-      </div>
-
-      {/* Discrete bottom privacy indicator */}
-      <div className="px-3 py-2.5 text-[11px] text-slate-500 border-t border-blue-200/70 dark:border-white/[0.06] flex items-center justify-between">
-        <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-400">
-          <Lock className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-          <span>Local Sandbox</span>
-        </span>
-        <span className="font-mono text-[10px] text-slate-500">v1.0</span>
       </div>
     </aside>
   );

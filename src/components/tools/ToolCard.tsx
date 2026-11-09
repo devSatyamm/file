@@ -20,7 +20,7 @@ export const ToolCard: React.FC<ToolCardProps> = ({ tool, onClick }) => {
           onClick(tool);
         }
       }}
-      className="group relative bg-white dark:bg-[#14161f] hover:bg-slate-50/90 dark:hover:bg-[#181b26] border border-slate-200/90 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.18] rounded-2xl p-5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none hover:shadow-md cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[170px]"
+      className="group relative bg-white/70 dark:bg-[#0c0f18]/65 backdrop-blur-xl hover:bg-white/85 dark:hover:bg-[#101422]/80 border border-slate-200/80 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.18] rounded-2xl p-5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none hover:shadow-md cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[170px]"
     >
       <div>
         {/* Top: Icon Badge & subtle arrow */}

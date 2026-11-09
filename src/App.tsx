@@ -10,15 +10,30 @@ import { ArchiveManager } from './components/archive/ArchiveManager';
 import { Footer } from './components/common/Footer';
 import { networkMonitor } from './services/networkMonitor';
 import { Home, LayoutGrid, Settings as SettingsIcon } from 'lucide-react';
+import bgDark from './assets/bg-dark.jpg';
+import bgLight from './assets/bg-light.jpg';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<string>('home');
   const [activeSubTab, setActiveSubTab] = useState<string | undefined>(undefined);
   const [presetTargetFormat, setPresetTargetFormat] = useState<string | null>(null);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    if (typeof document !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return true;
+  });
 
   useEffect(() => {
     // Initialize zero-leak network monitor on boot
     networkMonitor.init();
+
+    // Dynamically react to theme class changes on <html>
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
   }, []);
 
   const handleNavigate = (tab: string, subTab?: string, initialTargetFormat?: string) => {
@@ -34,19 +49,29 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-slate-900 dark:text-slate-100 flex flex-col antialiased selection:bg-blue-600/30 selection:text-blue-900 dark:selection:text-blue-200 transition-colors duration-200">
-      {/* Slim, Premium Header */}
-      <Header activeTab={activeTab} onNavigate={handleNavigate} />
+    <div className="relative min-h-screen text-slate-900 dark:text-slate-100 flex flex-col antialiased selection:bg-blue-600/30 selection:text-blue-900 dark:selection:text-blue-200 transition-colors duration-200 overflow-x-hidden">
+      {/* Dynamic Ambient Fullscreen Wallpaper */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-out"
+        style={{
+          backgroundImage: `url(${isDark ? bgDark : bgLight})`,
+        }}
+      />
 
-      {/* Main Layout Area */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Simplified Desktop Sidebar */}
-        <div className="hidden md:flex flex-col">
-          <Sidebar activeTab={activeTab} onNavigate={(tab) => handleNavigate(tab)} />
-        </div>
+      {/* Main Interactive App Container */}
+      <div className="relative z-10 flex-1 flex flex-col min-h-screen bg-transparent">
+        {/* Slim, Premium Header */}
+        <Header activeTab={activeTab} onNavigate={handleNavigate} />
 
-        {/* Dynamic Viewport Container */}
-        <main className="flex-1 overflow-y-auto flex flex-col justify-between">
+        {/* Main Layout Area */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Simplified Desktop Sidebar */}
+          <div className="hidden md:flex flex-col">
+            <Sidebar activeTab={activeTab} onNavigate={(tab) => handleNavigate(tab)} />
+          </div>
+
+          {/* Dynamic Viewport Container */}
+          <main className="flex-1 overflow-y-auto flex flex-col justify-between">
           <div className="flex-1">
             {activeTab === 'home' && (
               <HomePage
@@ -109,6 +134,7 @@ export function App() {
             </button>
           );
         })}
+      </div>
       </div>
     </div>
   );
