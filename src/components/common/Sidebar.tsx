@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Home,
   LayoutGrid,
-  Clock,
   Settings,
   Lock,
   Sparkles
@@ -24,11 +23,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onNavigate }) => {
       id: 'all-tools',
       label: 'All Tools',
       icon: LayoutGrid,
-    },
-    {
-      id: 'recent-files',
-      label: 'Recent Files',
-      icon: Clock,
     },
     {
       id: 'settings',

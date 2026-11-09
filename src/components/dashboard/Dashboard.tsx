@@ -9,15 +9,13 @@ import {
   ArrowRight,
   ShieldCheck,
   Zap,
-  Clock,
   Sparkles,
   Download,
   FileCheck,
   RefreshCw,
-  FolderOpen
 } from 'lucide-react';
 import { storageService } from '../../services/storageService';
-import { HistoryItem, EngineModuleStatus } from '../../types';
+import { EngineModuleStatus } from '../../types';
 
 interface DashboardProps {
   onNavigate: (tab: string) => void;
@@ -25,7 +23,6 @@ interface DashboardProps {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onFilesSelected }) => {
-  const [history, setHistory] = useState<HistoryItem[]>([]);
   const [modules, setModules] = useState<EngineModuleStatus[]>([]);
   const [storageEstimate, setStorageEstimate] = useState<{ usageMB: number; quotaMB: number; percentage: number }>({
     usageMB: 0,
@@ -39,10 +36,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onFilesSelecte
   }, []);
 
   const loadData = async () => {
-    const hist = await storageService.getHistory(5);
     const mods = await storageService.getModules();
     const est = await storageService.getStorageEstimate();
-    setHistory(hist);
     setModules(mods);
     setStorageEstimate(est);
   };
@@ -266,64 +261,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onFilesSelecte
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Recent Conversions */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-blue-400" />
-            Recent Local Conversions
-          </h3>
-          <button
-            onClick={() => onNavigate('filemanager')}
-            className="text-xs text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1"
-          >
-            <span>View All in File Manager</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {history.length === 0 ? (
-          <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] p-8 text-center text-slate-400">
-            <FolderOpen className="w-10 h-10 mx-auto mb-2 text-slate-600" />
-            <p className="text-sm font-medium text-slate-300">No conversions recorded yet</p>
-            <p className="text-xs text-slate-500 mt-1">
-              Drop any document, image, or spreadsheet above to begin local processing.
-            </p>
-          </div>
-        ) : (
-          <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] overflow-hidden divide-y divide-white/[0.04]">
-            {history.map((item) => (
-              <div key={item.id} className="p-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 font-bold text-xs uppercase">
-                    {item.targetFormat}
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-slate-200">{item.fileName}</span>
-                    <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                      <span className="uppercase text-slate-500 font-mono">{item.originalFormat}</span>
-                      <span>&rarr;</span>
-                      <span className="uppercase text-blue-400 font-mono">{item.targetFormat}</span>
-                      <span>•</span>
-                      <span>{(item.fileSize / 1024).toFixed(1)} KB</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-500 hidden sm:inline">
-                    {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Done ({item.durationMs}ms)
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

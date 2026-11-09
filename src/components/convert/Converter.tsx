@@ -19,7 +19,6 @@ import {
 import confetti from 'canvas-confetti';
 import { detectFile, getSupportedConversions } from '../../services/fileDetector';
 import { ConversionRegistry, ConversionOption } from '../../services/conversionRegistry';
-import { storageService } from '../../services/storageService';
 import { ArchiveService } from '../../services/archiveService';
 import { ConversionTask, DetectedFileInfo } from '../../types';
 import { FilePreviewModal } from '../common/FilePreviewModal';
@@ -130,20 +129,6 @@ export const Converter: React.FC<ConverterProps> = ({ queuedFiles, onClearQueued
             : t
         )
       );
-
-      // Persist to history
-      await storageService.addHistory({
-        id: Math.random().toString(36).substring(2, 9),
-        fileName: task.fileInfo.name,
-        fileSize: task.fileInfo.size,
-        originalFormat: task.fileInfo.detectedFormat,
-        targetFormat: task.targetFormat,
-        outputFileName,
-        outputSize: blob.size,
-        timestamp: Date.now(),
-        status: 'success',
-        durationMs,
-      });
 
     } catch (err: any) {
       console.error('Conversion failed:', err);

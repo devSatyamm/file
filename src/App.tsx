@@ -3,14 +3,13 @@ import { Header } from './components/common/Header';
 import { Sidebar } from './components/common/Sidebar';
 import { HomePage } from './components/home/HomePage';
 import { AllToolsPage } from './components/tools/AllToolsPage';
-import { RecentFilesPage } from './components/history/RecentFilesPage';
 import { Settings } from './components/settings/Settings';
 import { PdfToolkit } from './components/pdf/PdfToolkit';
 import { DevTools } from './components/devtools/DevTools';
 import { ArchiveManager } from './components/archive/ArchiveManager';
 import { Footer } from './components/common/Footer';
 import { networkMonitor } from './services/networkMonitor';
-import { Home, LayoutGrid, Clock, Settings as SettingsIcon } from 'lucide-react';
+import { Home, LayoutGrid, Settings as SettingsIcon } from 'lucide-react';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<string>('home');
@@ -60,10 +59,6 @@ export function App() {
               <AllToolsPage onNavigate={handleNavigate} />
             )}
 
-            {activeTab === 'recent-files' && (
-              <RecentFilesPage />
-            )}
-
             {activeTab === 'settings' && (
               <Settings />
             )}
@@ -97,7 +92,6 @@ export function App() {
         {[
           { id: 'home', label: 'Home', icon: Home },
           { id: 'all-tools', label: 'All Tools', icon: LayoutGrid },
-          { id: 'recent-files', label: 'Recent', icon: Clock },
           { id: 'settings', label: 'Settings', icon: SettingsIcon },
         ].map((item) => {
           const Icon = item.icon;

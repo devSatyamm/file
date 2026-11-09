@@ -26,7 +26,6 @@ import {
 import confetti from 'canvas-confetti';
 import { detectFile } from '../../services/fileDetector';
 import { ConversionRegistry } from '../../services/conversionRegistry';
-import { storageService } from '../../services/storageService';
 import { ArchiveService } from '../../services/archiveService';
 import { TOOLS_CATALOG, ToolDefinition } from '../../services/toolsCatalog';
 import { ConversionTask } from '../../types';
@@ -207,20 +206,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, presetTargetForm
             : t
         )
       );
-
-      await storageService.addHistory({
-        id: Math.random().toString(36).substring(2, 9),
-        fileName: task.fileInfo.name,
-        fileSize: task.fileInfo.size,
-        originalFormat: task.fileInfo.detectedFormat,
-        targetFormat: task.targetFormat,
-        outputFileName,
-        outputSize: blob.size,
-        timestamp: Date.now(),
-        status: 'success',
-        durationMs,
-      });
-
     } catch (err: any) {
       console.error('Conversion failed:', err);
       setTasks((prev) =>

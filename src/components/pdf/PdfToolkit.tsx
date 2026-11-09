@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { PdfToolkitService } from '../../services/pdfToolkitService';
 import { FilePreviewModal } from '../common/FilePreviewModal';
-import { storageService } from '../../services/storageService';
 
 export type PdfToolMode = 'merge' | 'split' | 'compress' | 'rotate' | 'delete' | 'watermark' | 'numbers';
 
@@ -121,23 +120,7 @@ export const PdfToolkit: React.FC<PdfToolkitProps> = ({ initialMode = 'merge' })
         outputFileName = `${baseName}_numbered.pdf`;
       }
 
-      const durationMs = Math.round(performance.now() - start);
       setResultBlob({ blob: outputBlob, fileName: outputFileName });
-
-      // Save to history
-      await storageService.addHistory({
-        id: Math.random().toString(36).substring(2, 9),
-        fileName: files[0].name,
-        fileSize: files[0].size,
-        originalFormat: 'pdf',
-        targetFormat: `pdf_${mode}`,
-        outputFileName,
-        outputSize: outputBlob.size,
-        timestamp: Date.now(),
-        status: 'success',
-        durationMs,
-      });
-
     } catch (err: any) {
       alert(`Operation failed: ${err.message}`);
     } finally {

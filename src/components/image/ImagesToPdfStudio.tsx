@@ -20,7 +20,6 @@ import {
 import confetti from 'canvas-confetti';
 import { ImageConverter, ImageToPdfItem, ImagesToPdfOptions } from '../../services/imageConverter';
 import { ArchiveService } from '../../services/archiveService';
-import { storageService } from '../../services/storageService';
 import { FilePreviewModal } from '../common/FilePreviewModal';
 
 interface StudioImageItem extends ImageToPdfItem {
@@ -145,21 +144,6 @@ export const ImagesToPdfStudio: React.FC<ImagesToPdfStudioProps> = ({
 
         const base = items[0].name.replace(/\.[^/.]+$/, '');
         const outputFileName = `${base}_combined_${items.length}pages.pdf`;
-
-        const durationMs = Math.round(performance.now() - startTime);
-
-        await storageService.addHistory({
-          id: Math.random().toString(36).substring(2, 9),
-          fileName: `${items.length} Images Combined`,
-          fileSize: items.reduce((acc, i) => acc + i.size, 0),
-          originalFormat: 'images',
-          targetFormat: 'pdf',
-          outputFileName,
-          outputSize: blob.size,
-          timestamp: Date.now(),
-          status: 'success',
-          durationMs,
-        });
 
         setResult({ blob, fileName: outputFileName, isZip: false });
         onPdfGenerated?.(blob, outputFileName);

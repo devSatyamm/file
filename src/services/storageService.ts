@@ -25,7 +25,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   defaultImageQuality: 0.85,
   defaultImageFormat: 'webp',
   autoDownloadOnComplete: false,
-  keepHistory: true,
+  keepHistory: false,
   zipCompressionLevel: 6,
   pdfCompressImages: true,
   storageQuotaWarningThreshold: 500, // MB
@@ -151,6 +151,14 @@ class StorageService {
             db.createObjectStore('modules', { keyPath: 'id' });
           }
         },
+      }).then(async (db) => {
+        // Enforce strict zero-trace architecture: wipe any lingering historical logs from disk on boot
+        if (db.objectStoreNames.contains('history')) {
+          try {
+            await db.clear('history');
+          } catch {}
+        }
+        return db;
       });
     }
     return this.dbPromise;
@@ -160,7 +168,7 @@ class StorageService {
     try {
       const db = await this.getDB();
       const saved = await db.get('settings', 'user_config');
-      return { ...DEFAULT_SETTINGS, ...(saved || {}) };
+      return { ...DEFAULT_SETTINGS, ...(saved || {}), keepHistory: false };
     } catch {
       return DEFAULT_SETTINGS;
     }
@@ -168,40 +176,33 @@ class StorageService {
 
   public async saveSettings(settings: Partial<UserSettings>): Promise<UserSettings> {
     const current = await this.getSettings();
-    const updated = { ...current, ...settings };
+    const updated = { ...current, ...settings, keepHistory: false };
     const db = await this.getDB();
     await db.put('settings', updated, 'user_config');
     return updated;
   }
 
-  public async addHistory(item: HistoryItem): Promise<void> {
-    const settings = await this.getSettings();
-    if (!settings.keepHistory) return;
-
-    const db = await this.getDB();
-    await db.put('history', item);
+  public async addHistory(_item: HistoryItem): Promise<void> {
+    // Zero-trace ephemeral architecture: FileForge strictly never writes conversion records, file names, or metadata to disk.
+    return;
   }
 
-  public async getHistory(limit = 50): Promise<HistoryItem[]> {
-    try {
-      const db = await this.getDB();
-      const tx = db.transaction('history', 'readonly');
-      const index = tx.store.index('by-timestamp');
-      const items = await index.getAll();
-      return items.reverse().slice(0, limit);
-    } catch {
-      return [];
-    }
+  public async getHistory(_limit = 50): Promise<HistoryItem[]> {
+    // Zero-trace mode: No file history is stored or returned
+    return [];
   }
 
-  public async deleteHistoryItem(id: string): Promise<void> {
-    const db = await this.getDB();
-    await db.delete('history', id);
+  public async deleteHistoryItem(_id: string): Promise<void> {
+    return;
   }
 
   public async clearHistory(): Promise<void> {
-    const db = await this.getDB();
-    await db.clear('history');
+    try {
+      const db = await this.getDB();
+      if (db.objectStoreNames.contains('history')) {
+        await db.clear('history');
+      }
+    } catch {}
   }
 
   public async getModules(): Promise<EngineModuleStatus[]> {

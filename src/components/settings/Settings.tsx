@@ -421,17 +421,16 @@ export const Settings: React.FC = () => {
                   </span>
                 </label>
 
-                <label className="flex items-center gap-2.5 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={settings.keepHistory}
-                    onChange={(e) => updateSetting('keepHistory', e.target.checked)}
-                    className="w-3.5 h-3.5 rounded bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-white/[0.1] text-blue-600 focus:ring-0"
-                  />
-                  <span className="text-xs text-slate-700 dark:text-slate-300">
-                    Keep local conversion records in IndexedDB
-                  </span>
-                </label>
+                {/* Zero-Trace Privacy Architecture */}
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300 flex items-start gap-2.5">
+                  <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold block">Strict Zero-Trace Architecture Active</span>
+                    <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
+                      No conversion history, filenames, or document records are ever written to browser disk or IndexedDB. All files are converted in volatile memory and destroyed immediately upon task completion.
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
